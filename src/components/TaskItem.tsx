@@ -1,28 +1,27 @@
-import React, { useState } from "react";
-import type { Task } from "../types";
+import type { Task, TaskStatus } from "../types";
 
 
 interface TaskItemProps {
     task: Task,
-    onTaskStatusChange: (id: string, status: string) => void
+    onTaskStatusChange: (id: string, status: TaskStatus) => void,
+    onDeleteTask: (id: string) => void
+
 }
 
 
-function TaskItem({ task, onTaskStatusChange }: TaskItemProps) {
+function TaskItem({ task, onTaskStatusChange, onDeleteTask }: TaskItemProps) {
 
     const { id, title, description, status, priority, dueDate } = task;
-    const [taskStatus, setTaskStatus] = useState(status);
 
 
     const statusFiltercolors: Record<string, string> = {
         pending: 'bg-yellow-100 text-yellow-800',
-        inProgress: 'text-blue-800',
-        completed: 'text-green-600'
+        inProgress: 'bg-white text-blue-800',
+        completed: 'bg-white text-green-600'
     };
 
     function handleStatus(event: React.ChangeEvent<HTMLSelectElement>) {
-        onTaskStatusChange(id, event.target.value);
-        setTaskStatus(event.target.value as typeof taskStatus)
+        onTaskStatusChange(id, event.target.value as TaskStatus);
     }
 
 
@@ -49,14 +48,14 @@ function TaskItem({ task, onTaskStatusChange }: TaskItemProps) {
                 </div>
                 <div className="flex gap-2">
                     <select
-                        value={taskStatus}
+                        value={status}
                         onChange={handleStatus}
-                        className={`px-2 py-1 ${statusFiltercolors[taskStatus]} rounded mx-2 `}>
+                        className={`px-2 py-1 ${statusFiltercolors[status]} rounded mx-2 `}>
                         <option value="pending">Pending</option>
                         <option value="inProgress">In Progress</option>
                         <option value="completed">Completed</option>
                     </select>
-                    <button className="text-red-500 hover:text-red-700">Delete</button>
+                    <button onClick={() => onDeleteTask(id)} className="text-red-500 hover:text-red-700">Delete</button>
                 </div>
             </div>
             <div className="flex gap-4">

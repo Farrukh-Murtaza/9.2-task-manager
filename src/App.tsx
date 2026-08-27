@@ -1,9 +1,7 @@
 import { useState } from "react";
 import TaskFilter from "./components/TaskFilter";
 import TaskList from "./components/TaskList";
-import { initialTasks, type Task } from "./types";
-
-
+import { initialTasks, type Task, type TaskStatus } from "./types";
 
 function App() {
 
@@ -11,43 +9,35 @@ function App() {
   const [selectedPriority, setPriorityStatus] = useState<string>('all');
 
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [tasksList, setListTasks] = useState<Task[]>(initialTasks);
 
 
-  function updateList(id: string, status: string) {
-
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, status: status as Task['status'] }
-      }
-      return task;
-    });
-
-    setTasks(updatedTasks);
-    setListTasks(updatedTasks);
-
+  function updateList(id: string, status: TaskStatus) {
+    setTasks(prev =>
+      prev.map(task => (task.id === id ? { ...task, status } : task))
+    );
   }
 
+  function deleteTask(id: string) {
+    const isConfirm: boolean = window.confirm(`Are you sure you want to delete task with id : ${id}`)
+    if (isConfirm) {
+      setTasks(prev => prev.filter(task => task.id !== id));
+    }
+  }
 
   function onFilterChange(status: string, priority: string) {
-
     setSelectedStatus(status);
     setPriorityStatus(priority);
-
-    let result: Task[] = tasks;
-
-    if (status !== 'all') {
-      result = result.filter(task => task.status === status);
-    }
-
-    if (priority !== 'all') {
-      result = result.filter(task => task.priority === priority);
-    }
-
-    setListTasks(result);
-
   }
 
+  let filteredTasks = tasks;
+
+  if (selectedStatus !== 'all') {
+    filteredTasks = filteredTasks.filter(task => task.status === selectedStatus);
+  }
+
+  if (selectedPriority !== 'all') {
+    filteredTasks = filteredTasks.filter(task => task.priority === selectedPriority);
+  }
 
 
   return (
@@ -65,11 +55,12 @@ function App() {
 
 
       <TaskList
-        tasks={tasksList}
-        onUpdateList={updateList} />
+        tasks={filteredTasks}
+        onUpdateList={updateList}
+        onDeleteTask={deleteTask} />
 
     </div>
   )
 }
 
-export default App
+export default App;
