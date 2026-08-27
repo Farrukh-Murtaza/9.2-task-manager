@@ -2,10 +2,17 @@ import type React from "react";
 import { useState } from "react";
 
 
-function TaskFilter({ onStatusFilter }) {
+interface TaskFilterProps {
+    onStatusFilter: (status: string) => void,
+    onPriorityFilter: (priority: string) => void
+}
+
+
+function TaskFilter({ onStatusFilter, onPriorityFilter }: TaskFilterProps) {
 
     const [statusFilter, setStatusFilter] = useState('all');
     const [priorityFilter, setPriorityFilter] = useState('all');
+
 
     function handleStatus(event: React.ChangeEvent<HTMLSelectElement>) {
         setStatusFilter(event.target.value);
@@ -14,8 +21,9 @@ function TaskFilter({ onStatusFilter }) {
 
     function handlePriority(event: React.ChangeEvent<HTMLSelectElement>) {
         setPriorityFilter(event.target.value);
-        console.log('Priority: ', event.target.value)
+        onPriorityFilter(event.target.value)
     }
+
 
     return (
         <div className="flex gap-4 py-4 justify-end">
@@ -55,7 +63,7 @@ function TaskFilter({ onStatusFilter }) {
                     <option value="low">Low</option>
                 </select>
             </div>
-        </div>
+        </div >
     )
 
 }

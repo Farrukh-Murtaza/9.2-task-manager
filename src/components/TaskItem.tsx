@@ -1,14 +1,25 @@
+import React, { useState } from "react";
 import type { Task } from "../types";
 
 
 interface TaskItemProps {
     task: Task,
-    onStatusChange?: (id: string, status: string) => void
+    onTaskStatusChange?: (id: string, status: string) => void
 }
 
 
-function TaskItem({ task }: TaskItemProps) {
+function TaskItem({ task, onTaskStatusChange }: TaskItemProps) {
+
     const { id, title, description, status, priority, dueDate } = task;
+    const [taskStatus, setTaskStatus] = useState(status);
+
+
+
+    function handleStatus(event: React.ChangeEvent<HTMLSelectElement>) {
+        onTaskStatusChange(id, event.target.value)
+        setTaskStatus(event.target.value)
+    }
+
 
     const getPriorityElement = (priority: string) => {
         const colors: Record<string, string> = {
@@ -33,6 +44,8 @@ function TaskItem({ task }: TaskItemProps) {
                 </div>
                 <div className="flex gap-2">
                     <select
+                        value={taskStatus}
+                        onChange={handleStatus}
                         // onChange={(e) => onStatusChange?.(id, e.target.value)}
                         className="px-2 py-1 rounded mx-2 bg-yellow-100 text-yellow-800">
                         <option value="pending">Pending</option>
