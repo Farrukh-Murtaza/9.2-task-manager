@@ -4,7 +4,7 @@ import type { Task } from "../types";
 
 interface TaskItemProps {
     task: Task,
-    onTaskStatusChange?: (id: string, status: string) => void
+    onTaskStatusChange: (id: string, status: string) => void
 }
 
 
@@ -14,10 +14,15 @@ function TaskItem({ task, onTaskStatusChange }: TaskItemProps) {
     const [taskStatus, setTaskStatus] = useState(status);
 
 
+    const statusFiltercolors: Record<string, string> = {
+        pending: 'bg-yellow-100 text-yellow-800',
+        inProgress: 'text-blue-800',
+        completed: 'text-green-600'
+    };
 
     function handleStatus(event: React.ChangeEvent<HTMLSelectElement>) {
-        onTaskStatusChange(id, event.target.value)
-        setTaskStatus(event.target.value)
+        onTaskStatusChange(id, event.target.value);
+        setTaskStatus(event.target.value as typeof taskStatus)
     }
 
 
@@ -36,7 +41,7 @@ function TaskItem({ task, onTaskStatusChange }: TaskItemProps) {
 
 
     return (
-        <div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-black dark:border-gray-700">
+        <div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white">
             <div className="flex justify-between items-start">
                 <div>
                     <h3 className="text-lg font-semibold">{title}</h3>
@@ -46,10 +51,9 @@ function TaskItem({ task, onTaskStatusChange }: TaskItemProps) {
                     <select
                         value={taskStatus}
                         onChange={handleStatus}
-                        // onChange={(e) => onStatusChange?.(id, e.target.value)}
-                        className="px-2 py-1 rounded mx-2 bg-yellow-100 text-yellow-800">
+                        className={`px-2 py-1 ${statusFiltercolors[taskStatus]} rounded mx-2 `}>
                         <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
+                        <option value="inProgress">In Progress</option>
                         <option value="completed">Completed</option>
                     </select>
                     <button className="text-red-500 hover:text-red-700">Delete</button>

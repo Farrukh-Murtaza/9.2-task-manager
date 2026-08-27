@@ -3,6 +3,8 @@ import TaskFilter from "./components/TaskFilter";
 import TaskList from "./components/TaskList";
 import { initialTasks, type Task } from "./types";
 
+
+
 function App() {
 
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -11,31 +13,6 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [tasksList, setListTasks] = useState<Task[]>(initialTasks);
 
-
-  function handleStatusFilter(status: string) {
-    setSelectedStatus(status);
-    if (status === 'all') {
-      setListTasks(tasks); // Reset to full list
-    } else {
-      const result = tasks.filter(task => task.status === status);
-      setListTasks(result);
-    }
-
-  }
-
-
-  function handlePriorityFilter(priority: string) {
-
-    setPriorityStatus(priority)
-
-    if (priority !== 'all') {
-      const result = tasks.filter(task => task.priority === priority);
-      setListTasks(result);
-    } else {
-      setListTasks(tasks);
-    }
-
-  }
 
   function updateList(id: string, status: string) {
 
@@ -52,13 +29,44 @@ function App() {
   }
 
 
+  function onFilterChange(status: string, priority: string) {
+
+    setSelectedStatus(status);
+    setPriorityStatus(priority);
+
+    let result: Task[] = tasks;
+
+    if (status !== 'all') {
+      result = result.filter(task => task.status === status);
+    }
+
+    if (priority !== 'all') {
+      result = result.filter(task => task.priority === priority);
+    }
+
+    setListTasks(result);
+
+  }
+
+
 
   return (
     <div className="max-w-200 m-auto ">
-      <h2 className="tracking-tight text-slate-900  font-semibold target:animate-[fade-in_1.5s] mt-10 border-b pb-1 text-3xl nextra-border">Task Manager</h2>
+      <h2
+        className="tracking-tight text-slate-900 font-semibold
+        target:animate-[fade-in_1.5s] mt-10 border-b
+         pb-1 text-3xl nextra-border"
+      >Task Manager</h2>
 
-      <TaskFilter onStatusFilter={handleStatusFilter} onPriorityFilter={handlePriorityFilter} />
-      <TaskList tasks={tasksList} onUpdateList={updateList} />
+      <TaskFilter
+        onFilter={onFilterChange}
+        selectedStatus={selectedStatus}
+        selectedPriority={selectedPriority} />
+
+
+      <TaskList
+        tasks={tasksList}
+        onUpdateList={updateList} />
 
     </div>
   )

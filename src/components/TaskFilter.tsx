@@ -1,27 +1,30 @@
 import type React from "react";
 import { useState } from "react";
 
-
 interface TaskFilterProps {
-    onStatusFilter: (status: string) => void,
-    onPriorityFilter: (priority: string) => void
+    selectedStatus: string,
+    selectedPriority: string,
+    onFilter: (status: string, priority: string) => void
 }
 
+function TaskFilter({ selectedStatus, selectedPriority, onFilter }: TaskFilterProps) {
 
-function TaskFilter({ onStatusFilter, onPriorityFilter }: TaskFilterProps) {
+    const [statusFilter, setStatusFilter] = useState(selectedStatus);
+    const [priorityFilter, setPriorityFilter] = useState(selectedPriority);
 
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [priorityFilter, setPriorityFilter] = useState('all');
+    function handleFilters(event: React.ChangeEvent<HTMLSelectElement>) {
+        const value = event.target.value;
 
+        if (event.target.id === 'status-filter') {
+            setStatusFilter(value);
+            onFilter(value, priorityFilter)
+        }
 
-    function handleStatus(event: React.ChangeEvent<HTMLSelectElement>) {
-        setStatusFilter(event.target.value);
-        onStatusFilter(event.target.value);
-    }
+        if (event.target.id === 'priority-filter') {
+            setPriorityFilter(value);
+            onFilter(statusFilter, value)
+        }
 
-    function handlePriority(event: React.ChangeEvent<HTMLSelectElement>) {
-        setPriorityFilter(event.target.value);
-        onPriorityFilter(event.target.value)
     }
 
 
@@ -36,12 +39,12 @@ function TaskFilter({ onStatusFilter, onPriorityFilter }: TaskFilterProps) {
                 <select
                     id="status-filter"
                     value={statusFilter}
-                    onChange={handleStatus}
+                    onChange={handleFilters}
                     className="bg-white px-2 py-1 block w-full rounded-md border-gray-300
                      shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
-                    <option value="in-progress">In Progress</option>
+                    <option value="inProgress">In Progress</option>
                     <option value="completed">Completed</option>
                 </select>
             </div>
@@ -54,7 +57,7 @@ function TaskFilter({ onStatusFilter, onPriorityFilter }: TaskFilterProps) {
                 <select
                     id="priority-filter"
                     value={priorityFilter}
-                    onChange={handlePriority}
+                    onChange={handleFilters}
                     className="bg-white px-2 py-1 block w-full rounded-md border-gray-300
                      shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="all">All Priorities</option>
